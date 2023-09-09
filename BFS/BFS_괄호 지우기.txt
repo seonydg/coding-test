@@ -1,0 +1,70 @@
+문제:
+올바르지 않은 괄호문자열이 주어지면, 최소 횟수로 괄호를 제거하여
+올바른 괄호문자열로 만드는 프로그램을 작성하시오.
+그리고 괄호를 최소로 제거했을 때 나올 수 있는 모든 올바른 괄호문자의 경우의 수도 출력하시오.
+
+입력설명:
+길이가 40이 넘지 않는 올바르지 않은 괄호문자열이 s에 주어진다
+
+출력설명:
+최소횟수로 지웠을 때 나올 수 있는 모든 올바른 괄호문자열 경우의 수를 반환한다.
+
+설명:
+'()(()()'은 '()()()'와 '()(())' 두 가지 경우의 수가 있다.
+
+입력예제
+()(()()
+출력예제
+2
+
+입력예제
+())((()()))(()()()
+출력예제
+3
+
+----------------------------------------------------------------
+
+from collections import deque
+
+def getTF(bk):
+    stack = []
+    for i in bk:
+        if i == '(':
+            stack.append(i)
+        else:
+            if stack:
+                stack.pop()
+            else:
+                return False
+    if stack:
+        return False
+    return True
+
+def solution(s):
+    dQ = deque()
+    dQ.append(s) # 'dQ = deque()'하면 괄호 하나 하나가 리스트에 원소로 담긴다.
+    result = set() #             괄호 전체가 하나의 문자로 담겨야 한다.
+    visited = set() # 같은 괄호가 큐에 들어가지 않도록
+
+    while dQ:
+        for i in range(len(dQ)):
+            bracket = dQ.popleft()
+            if getTF(bracket):
+                print('bracket:', bracket)
+                result.add(bracket)
+                continue # 현재의 큐 레벨에서만 반복문 실행
+            for j in range(len(bracket)):
+                nextBk = bracket[:j] + bracket[j + 1:]
+                if nextBk not in visited:
+                    dQ.append(nextBk)
+                    visited.add(bracket)
+
+        if len(result) != 0:
+            break
+
+    return len(result)
+
+
+if __name__ == '__main__':
+    s = input()
+    print(solution(s))
